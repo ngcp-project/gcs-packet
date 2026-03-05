@@ -1,15 +1,18 @@
-from CommandInterface import CommandInterface
+from Command.CommandInterface import CommandInterface
 
-import struct
 import json
+import struct
 import warnings
 
 class PatientLocation(CommandInterface):
-    PAYLOAD = 1 # All commands will have a payload ID of 1
+    FORMAT_STRING = "=BIdd"
     COMMAND_ID = 5
 
-    @staticmethod
-    def encode_packet(coordinates: tuple) -> bytes:
+    def __init__(self, coordinates: tuple[float, float]):
+        self.coordinates = coordinates
+        self.packet_id = CommandInterface.generate_packet_id()
+
+    def encode_packet(self) -> bytes:
         """Encode data packet
 
         Args:
@@ -21,20 +24,13 @@ class PatientLocation(CommandInterface):
 
         # how struct.pack and its format characters (e.g. "BB" or "dd") are explained here https://docs.python.org/3/library/struct.html 
         # encodes the header
-        header_byte_struct = "BB"
-        header = struct.pack(header_byte_struct, PatientLocation.PAYLOAD_ID, PatientLocation.COMMAND_ID)
-
-        # encodes the byte stream coordinate data
-        coord_byte_struct = "dd"
-        coord_byte_stream = struct.pack(coord_byte_struct, coordinates[0], coordinates[1])
-
-        encoded_stream = header + coord_byte_stream
+        encoded_string = struct.pack(self.FORMAT_STRING, PatientLocation.COMMAND_ID, self.packet_id, self.coordinates[0], self.coordinates[1])
     
-        return encoded_stream
+        return encoded_string
     
     
     @staticmethod
-    def decode_packet(encoded_string, format: str = None):
+    def decode_packet(encoded_string):
         """Decodes data packet
         
         Args:
@@ -44,23 +40,28 @@ class PatientLocation(CommandInterface):
         Returns:
             (x, y) tuple or JSON string with x and y keys
         """
-        if format is None:
-            warnings.warn("Format not specified in decode_packet, defaulting to 'tuple'", UserWarning)
+        #if format is None:
+            #warnings.warn("Format not specified in decode_packet, defaulting to 'tuple'", UserWarning)
 
-        decode_byte_struct = "=BBdd"
+        expected_size = struct.calcsize(PatientLocation.FORMAT_STRING)
 
-        expected_length = struct.calcsize(decode_byte_struct)
-        if len(encoded_string) != expected_length:
-            raise ValueError(f"Encoded string length {len(encoded_string)} does not match expected length {expected_length}")
+        if len(encoded_string) != expected_size:
+            raise ValueError(f"Encoded string length {len(encoded_string)} does not match expected length {expected_size}")
         
-        unpacked_data = struct.unpack(decode_byte_struct, encoded_string)
+        unpacked_data = struct.unpack(PatientLocation.FORMAT_STRING, encoded_string)
 
         # we are ignoring the "=BB" part here which is the header, "unpacked_data" would look like [1, 5, <some double value>, <some double value>]
-        x, y = unpacked_data[2], unpacked_data[3]
+        coordinates = (unpacked_data[2], unpacked_data[3])
         
-        if format == "json":
-            return json.dumps({"x": x, "y": y}, indent=2)
+        #if format == "json":
+            #return json.dumps({"x": x, "y": y}, indent=2)
+
+        json_data = {
+            "Command ID": unpacked_data[0],
+            "Packet ID": unpacked_data[1],
+            "Coordinates": coordinates
+        }
         
-        return (x, y)
+        return json.dumps(json_data)
         
     
