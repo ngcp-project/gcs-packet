@@ -36,7 +36,7 @@ class Telemetry:
         return struct.pack(self.format_string, self.payloadId, self.packetId,
                         self.speed, self.pitch, self.yaw, self.roll,
                         self.altitude, self.battery_life, self.last_updated,
-                        self.current_lat, self.current_long,
+                        self.current_long, self.current_lat,
                         self.vehicle_status,
                         self.message_flag,
                         self.message_lat, self.message_lon, self.patient_status

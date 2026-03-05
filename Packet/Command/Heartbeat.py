@@ -21,7 +21,7 @@ class Heartbeat(CommandInterface):
         Returns:
             Encoded data bytes
         """
-        encoded_string = struct.pack(Heartbeat.FORMAT_STRING, Heartbeat.COMMAND_ID, self.packet_id, self.packet_id)
+        encoded_string = struct.pack(Heartbeat.FORMAT_STRING, Heartbeat.COMMAND_ID, self.packet_id, self.connection_status.value)
 
         return encoded_string
 
