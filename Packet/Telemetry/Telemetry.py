@@ -65,7 +65,7 @@ class Telemetry:
         return Telemetry(*unpacked_data)
 
     def __str__(self):
-        return (f"Telemetry: Command ID: {self.payloadId}, Packet ID: {self.PacketID}, Speed: {self.speed}, Pitch: {self.pitch}, Yaw: {self.yaw}, Roll: {self.roll}, "
+        return (f"Telemetry: Command ID: {self.payloadId}, Packet ID: {self.packetId}, Speed: {self.speed}, Pitch: {self.pitch}, Yaw: {self.yaw}, Roll: {self.roll}, "
             f"Altitude: {self.altitude}, Battery Life: {self.battery_life:.2f}, Last Updated: {self.last_updated}, "
             f"Current Position: ({self.current_long}, {self.current_lat}), "
             f"Vehicle Status: {self.vehicle_status}, "
