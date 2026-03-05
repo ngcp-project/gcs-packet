@@ -4,13 +4,12 @@ class Telemetry:
     """Handles telemetry data encoding and decoding for UAV/UGV communication."""
 
     format_string = "=BI6fQ2d2B2dB"
-    PacketID = 0
     
-    def __init__(self, payloadId=0, packetId = PacketID, speed=0, pitch=0, yaw=0, roll=0, altitude=0, battery_life=0, last_updated=0,
+    def __init__(self, payloadId=0, packetId = 0, speed=0, pitch=0, yaw=0, roll=0, altitude=0, battery_life=0, last_updated=0,
              current_position = (0, 0), vehicle_status=0,
              message_flag=0, message_lat=0.0, message_lon=0.0, patient_status=0):
         self.payloadId = payloadId # Payload ID for telemetry data is always 2
-        self.packetId = Telemetry.PacketID
+        self.packetId = packetId
         self.speed = speed
         self.pitch = pitch
         self.yaw = yaw
