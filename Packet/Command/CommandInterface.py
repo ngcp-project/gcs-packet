@@ -2,12 +2,9 @@
 
 class CommandInterface:
     # FORMAT_STRING = # More information here: https://docs.python.org/3/library/struct.html
-    PAYLOAD_ID = 1 # All commands will have a payload ID of 1
     PacketID = 0
-    # COMMAND_ID =
 
-    @staticmethod
-    def encode_data(data) -> str:
+    def encode_packet(self) -> bytes:
         """Encode data packet
 
         Args:
@@ -19,7 +16,7 @@ class CommandInterface:
         pass
 
     @staticmethod
-    def decode_data(encoded_string) -> str:
+    def decode_data(encoded_string):
         """Decodes data packet
         
         Args:
