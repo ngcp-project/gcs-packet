@@ -3,73 +3,73 @@ import struct
 class Telemetry:
     """Handles telemetry data encoding and decoding for UAV/UGV communication."""
 
-    format_string = "=BI6fQ2d2B2dB"
+    FORMAT_STRING = "=BI6fQ2d2B2dB"
     
-    def __init__(self, payloadId=0, packetId = 0, speed=0, pitch=0, yaw=0, roll=0, altitude=0, battery_life=0, last_updated=0,
-             current_position = (0, 0), vehicle_status=0,
-             message_flag=0, message_lat=0.0, message_lon=0.0, patient_status=0):
-        self.payloadId = payloadId # Payload ID for telemetry data is always 2
-        self.packetId = packetId
-        self.speed = speed
-        self.pitch = pitch
-        self.yaw = yaw
-        self.roll = roll
-        self.altitude = altitude
-        self.battery_life = battery_life
-        self.last_updated = last_updated
-        self.current_long = current_position[0]
-        self.current_lat = current_position[1]
-        self.vehicle_status = vehicle_status  # 1 byte (Status flag 0-255)
+    def __init__(self, CommandID = 0, PacketID = 0, Speed = 0, Pitch = 0, Yaw = 0, Roll = 0, Altitude = 0, BatteryLife = 0, LastUpdated = 0,
+             CurrentPosition = (0, 0), VehicleStatus = 0,
+             MessageFlag = 0, MessageLat = 0.0, MessageLon = 0.0, PatientStatus = 0):
+        self.CommandID = CommandID
+        self.PacketID = PacketID
+        self.Speed = Speed
+        self.Pitch = Pitch
+        self.Yaw = Yaw
+        self.Roll = Roll
+        self.Altitude = Altitude
+        self.BatteryLife = BatteryLife
+        self.LastUpdated = LastUpdated
+        self.CurrentPositionX = CurrentPosition[0]
+        self.CurrentPositionY = CurrentPosition[1]
+        self.VehicleStatus = VehicleStatus  # 1 byte (Status flag 0-255)
 
         # Message attributes (default: no message)
-        self.message_flag = message_flag  # 0 = No Message, 1 = Package, 2 = Patient
-        self.message_lat = message_lat
-        self.message_lon = message_lon
-        self.patient_status = patient_status
+        self.MessageFlag = MessageFlag  # 0 = No Message, 1 = Package, 2 = Patient
+        self.MessageLat = MessageLat
+        self.MessageLon = MessageLon
+        self.PatientStatus = PatientStatus
 
-    def encode(self):
+    def Encode(self):
         """Encode the current Telemetry instance into binary format."""
 
-        #Telemetry.PacketID += 1
-
-        return struct.pack(self.format_string, self.payloadId, self.packetId,
-                        self.speed, self.pitch, self.yaw, self.roll,
-                        self.altitude, self.battery_life, self.last_updated,
-                        self.current_long, self.current_lat,
-                        self.vehicle_status,
-                        self.message_flag,
-                        self.message_lat, self.message_lon, self.patient_status
+        return struct.pack(self.FORMAT_STRING, self.CommandID, self.PacketID,
+                        self.Speed, self.Pitch, self.Yaw, self.Roll,
+                        self.Altitude, self.BatteryLife, self.LastUpdated,
+                        self.CurrentPositionX, self.CurrentPositionY,
+                        self.VehicleStatus,
+                        self.MessageFlag,
+                        self.MessageLat, self.MessageLon, self.PatientStatus
                         )
 
     @staticmethod
-    def decode(binary_data):
+    def Decode(BinaryData):
         """Decode binary telemetry data into a Telemetry object."""
-        expected_size = 72  # Total size of the telemetry packet (in bytes)
-        if len(binary_data) != expected_size:
-            print(f"Invalid telemetry packet size. Expected {expected_size}, got {len(binary_data)}")
+
+        ExpectedSize = 72  # Total size of the telemetry packet (in bytes)
+
+        if len(BinaryData) != ExpectedSize:
+            print(f"Invalid telemetry packet size. Expected {ExpectedSize}, got {len(BinaryData)}")
             return None
         
 
 
-        unpacked_data = struct.unpack(Telemetry.format_string, binary_data)
+        UnpackedData = struct.unpack(Telemetry.FORMAT_STRING, BinaryData)
 
-        list_data = list(unpacked_data)
+        ListData = list(UnpackedData)
 
-        current_location = (unpacked_data[9], unpacked_data[10])
+        CurrentLocation = (UnpackedData[9], UnpackedData[10])
 
-        list_data.pop(10)
-        list_data[9] = current_location
+        ListData.pop(10)
+        ListData[9] = CurrentLocation
 
-        unpacked_data = tuple(list_data)
+        UnpackedData = tuple(ListData)
 
-        return Telemetry(*unpacked_data)
+        return Telemetry(*UnpackedData)
 
     def __str__(self):
-        return (f"Telemetry: Command ID: {self.payloadId}, Packet ID: {self.packetId}, Speed: {self.speed}, Pitch: {self.pitch}, Yaw: {self.yaw}, Roll: {self.roll}, "
-            f"Altitude: {self.altitude}, Battery Life: {self.battery_life:.2f}, Last Updated: {self.last_updated}, "
-            f"Current Position: ({self.current_long}, {self.current_lat}), "
-            f"Vehicle Status: {self.vehicle_status}, "
-            f"Message Flag: {self.message_flag}, "
-            f"Message Location: ({self.message_lat}, {self.message_lon}), "
-            f"Patient Status: {self.patient_status}"
+        return (f"Telemetry: Command ID: {self.CommandID}, Packet ID: {self.PacketID}, Speed: {self.Speed}, Pitch: {self.Pitch}, Yaw: {self.Yaw}, Roll: {self.Roll}, "
+            f"Altitude: {self.Altitude}, Battery Life: {self.BatteryLife:.2f}, Last Updated: {self.LastUpdated}, "
+            f"Current Position: ({self.CurrentPositionX}, {self.CurrentPositionY}), "
+            f"Vehicle Status: {self.VehicleStatus}, "
+            f"Message Flag: {self.MessageFlag}, "
+            f"Message Location: ({self.MessageLat}, {self.MessageLon}), "
+            f"Patient Status: {self.PatientStatus}"
             )
