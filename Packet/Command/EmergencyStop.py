@@ -7,11 +7,12 @@ class EmergencyStop(CommandInterface):
     FORMAT_STRING = "BIB"
     COMMAND_ID = 2
 
-    def __init__(self, stop_status: int):
-        self.stop_status = stop_status
-        self.packet_id = CommandInterface.generate_packet_id()
+    def __init__(self, StopStatus: int):
+        super().__init__()
 
-    def encode_packet(self) -> bytes:
+        self.StopStatus = StopStatus
+
+    def EncodePacket(self) -> bytes:
         """Encode data packet
 
         Args:
@@ -20,12 +21,12 @@ class EmergencyStop(CommandInterface):
         Returns:
             Encoded data bytes
         """
-        encoded_string = struct.pack(EmergencyStop.FORMAT_STRING, EmergencyStop.COMMAND_ID, self.packet_id, self.stop_status)
+        EncodedString = struct.pack(EmergencyStop.FORMAT_STRING, EmergencyStop.COMMAND_ID, self.PacketID, self.StopStatus)
 
-        return encoded_string
+        return EncodedString
 
     @staticmethod
-    def decode_packet(encoded_string) -> int:
+    def DecodePacket(EncodedString) -> int:
         """Decodes data packet
         
         Args:
@@ -34,17 +35,17 @@ class EmergencyStop(CommandInterface):
         Returns:
             Data from encoded data packet
         """
-        expected_size = 9
+        ExpectedSize = 9
 
-        if len(encoded_string) != expected_size:
+        if len(EncodedString) != ExpectedSize:
             print("Invalid String Size")
 
-        unpacked_data = struct.unpack(EmergencyStop.FORMAT_STRING, encoded_string)
+        UnpackedData = struct.unpack(EmergencyStop.FORMAT_STRING, EncodedString)
 
-        json_data = {
-            "Command ID": unpacked_data[0],
-            "Packet ID": unpacked_data[1],
-            "Stop Status": unpacked_data[2]
+        JSONData = {
+            "Command ID": UnpackedData[0],
+            "Packet ID": UnpackedData[1],
+            "Stop Status": UnpackedData[2]
         }
 
-        return json.dumps(json_data)
+        return json.dumps(JSONData)
