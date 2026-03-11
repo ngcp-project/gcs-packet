@@ -5,3 +5,4 @@ class Vehicle(Enum):
     MRA = 1
     MEA = 2
     ERU = 3
+    ALL = 4
