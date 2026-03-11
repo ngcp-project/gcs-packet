@@ -10,6 +10,8 @@ class Telemetry:
              MessageFlag = 0, MessageLat = 0.0, MessageLon = 0.0, PatientStatus = 0):
         self.CommandID = CommandID
         self.PacketID = PacketID
+        self.Vehicle = None
+        self.MACAddress = None
         self.Speed = Speed
         self.Pitch = Pitch
         self.Yaw = Yaw
