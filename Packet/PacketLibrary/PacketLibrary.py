@@ -6,9 +6,23 @@ class PacketLibrary:
     ERU_MAC_ADDRESS = ""
 
     @staticmethod
+    def GetMACAddressFromVehicle(VehicleName: Vehicle) -> str | tuple:
+        match (VehicleName):
+            case Vehicle.MRA:
+                return PacketLibrary.MRA_MAC_ADDRESS
+            case Vehicle.MEA:
+                return PacketLibrary.MEA_MAC_ADDRESS
+            case Vehicle.ERU:
+                return PacketLibrary.ERU_MAC_ADDRESS
+            case Vehicle.ALL:
+                return (Vehicle.MRA, Vehicle.MEA, Vehicle.ERU)
+            case _:
+                print("Vehicle specification unknown. MAC address cannot be provided")
+
+    @staticmethod
     def GetVehicleFromMACAddress(MACAddress: str) -> Vehicle:
         MACAddress = MACAddress.upper()
-        
+
         if (MACAddress == PacketLibrary.MRA_MAC_ADDRESS):
             return Vehicle.MRA
         elif (MACAddress == PacketLibrary.MEA_MAC_ADDRESS):
