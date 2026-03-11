@@ -8,11 +8,12 @@ class PatientLocation(CommandInterface):
     FORMAT_STRING = "=BIdd"
     COMMAND_ID = 5
 
-    def __init__(self, coordinates: tuple[float, float]):
-        self.coordinates = coordinates
-        self.packet_id = CommandInterface.generate_packet_id()
+    def __init__(self, Coordinates: tuple[float, float]):
+        super().__init__()
 
-    def encode_packet(self) -> bytes:
+        self.Coordinates = Coordinates
+
+    def EncodePacket(self) -> bytes:
         """Encode data packet
 
         Args:
@@ -24,13 +25,12 @@ class PatientLocation(CommandInterface):
 
         # how struct.pack and its format characters (e.g. "BB" or "dd") are explained here https://docs.python.org/3/library/struct.html 
         # encodes the header
-        encoded_string = struct.pack(self.FORMAT_STRING, PatientLocation.COMMAND_ID, self.packet_id, self.coordinates[0], self.coordinates[1])
+        EncodedString = struct.pack(self.FORMAT_STRING, PatientLocation.COMMAND_ID, self.PacketID, self.Coordinates[0], self.Coordinates[1])
     
-        return encoded_string
-    
+        return EncodedString
     
     @staticmethod
-    def decode_packet(encoded_string):
+    def DecodePacket(EncodedString):
         """Decodes data packet
         
         Args:
@@ -43,25 +43,25 @@ class PatientLocation(CommandInterface):
         #if format is None:
             #warnings.warn("Format not specified in decode_packet, defaulting to 'tuple'", UserWarning)
 
-        expected_size = struct.calcsize(PatientLocation.FORMAT_STRING)
+        ExpectedSize = struct.calcsize(PatientLocation.FORMAT_STRING)
 
-        if len(encoded_string) != expected_size:
-            raise ValueError(f"Encoded string length {len(encoded_string)} does not match expected length {expected_size}")
+        if len(EncodedString) != ExpectedSize:
+            raise ValueError(f"Encoded string length {len(EncodedString)} does not match expected length {ExpectedSize}")
         
-        unpacked_data = struct.unpack(PatientLocation.FORMAT_STRING, encoded_string)
+        UnpackedData = struct.unpack(PatientLocation.FORMAT_STRING, EncodedString)
 
         # we are ignoring the "=BB" part here which is the header, "unpacked_data" would look like [1, 5, <some double value>, <some double value>]
-        coordinates = (unpacked_data[2], unpacked_data[3])
+        Coordinates = (UnpackedData[2], UnpackedData[3])
         
         #if format == "json":
             #return json.dumps({"x": x, "y": y}, indent=2)
 
-        json_data = {
-            "Command ID": unpacked_data[0],
-            "Packet ID": unpacked_data[1],
-            "Coordinates": coordinates
+        JSONData = {
+            "Command ID": UnpackedData[0],
+            "Packet ID": UnpackedData[1],
+            "Coordinates": Coordinates
         }
         
-        return json.dumps(json_data)
+        return json.dumps(JSONData)
         
     

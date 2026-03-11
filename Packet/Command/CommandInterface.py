@@ -1,10 +1,16 @@
+from Enum import Vehicle
+
 # Can be used to implement the serial port manager for other radio modules
 
 class CommandInterface:
     # FORMAT_STRING = # More information here: https://docs.python.org/3/library/struct.html
-    PacketID = 0
+    PACKET_ID = 0
 
-    def encode_packet(self) -> bytes:
+    def __init__(self):
+        self.PacketID = CommandInterface.GeneratePacketID()
+        self.Vehicle = Vehicle.UNKNOWN
+
+    def EncodePacket(self) -> bytes:
         """Encode data packet
 
         Args:
@@ -16,7 +22,7 @@ class CommandInterface:
         pass
 
     @staticmethod
-    def decode_data(encoded_string):
+    def DecodePacket(encoded_string):
         """Decodes data packet
         
         Args:
@@ -28,9 +34,9 @@ class CommandInterface:
         pass
     
     @staticmethod
-    def generate_packet_id():
-        current_packet_id = CommandInterface.PacketID
+    def GeneratePacketID():
+        CurrentPacketID = CommandInterface.PACKET_ID
 
-        CommandInterface.PacketID += 1
+        CommandInterface.PACKET_ID += 1
 
-        return current_packet_id
+        return CurrentPacketID

@@ -7,11 +7,12 @@ class KeepIn(CommandInterface):
     FORMAT_STRING = "=BI"
     COMMAND_ID = 3
 
-    def __init__(self, coordinates: list):
-        self.coordinates = coordinates
-        self.packet_id = CommandInterface.generate_packet_id()
+    def __init__(self, Coordinates: list):
+        super().__init__()
 
-    def encode_packet(self) -> bytes:
+        self.Coordinates = Coordinates
+
+    def EncodePacket(self) -> bytes:
         """Encode data packet
 
         Args:
@@ -20,25 +21,25 @@ class KeepIn(CommandInterface):
         Returns:
             Encoded data bytes
         """
-        # Start with payload and command IDs
-        header = struct.pack(self.FORMAT_STRING, KeepIn.COMMAND_ID, self.packet_id)
+        # Start with Command ID and Packet IDs
+        Header = struct.pack(self.FORMAT_STRING, KeepIn.COMMAND_ID, self.PacketID)
 
         # Flatten the list of tuples into a single list of floats
-        flat_coords = [item for coord in self.coordinates for item in coord]
+        FlattenedCoordinates = [Item for Coordinate in self.Coordinates for Item in Coordinate]
 
         # Build the format string: two bytes for header, then 2 doubles per coordinate
-        format_string = f"{len(flat_coords)}d"
+        FormatString = f"{len(FlattenedCoordinates)}d"
 
-        if flat_coords:
-            coords_bytes = struct.pack(format_string, *flat_coords)
-            encoded_string = header + coords_bytes
+        if FlattenedCoordinates:
+            CoordinateBytes = struct.pack(FormatString, *FlattenedCoordinates)
+            EncodedString = Header + CoordinateBytes
         else:
-            encoded_string = header
+            EncodedString = Header
 
-        return encoded_string
+        return EncodedString
 
     @staticmethod
-    def decode_packet(encoded_string) -> int:
+    def DecodePacket(EncodedString) -> int:
         """Decodes data packet
         
         Args:
@@ -47,29 +48,29 @@ class KeepIn(CommandInterface):
         Returns:
             Data from encoded data packet
         """
-        num_coordinates = (len(encoded_string) - 2) // 16
+        CoordinateCount = (len(EncodedString) - 2) // 16
 
-        if num_coordinates > 6:
+        if CoordinateCount > 6:
             print("Too many coordinates")
 
-        format_string = KeepIn.FORMAT_STRING + "dd" * int(num_coordinates)
+        FormatString = KeepIn.FORMAT_STRING + "dd" * int(CoordinateCount)
 
-        expected_length = struct.calcsize(format_string)
+        ExpectedLength = struct.calcsize(FormatString)
 
-        if len(encoded_string) != expected_length:
-            raise ValueError(f"Encoded string length {len(encoded_string)} does not match expected {expected_length} for format '{format_string}'")
+        if len(EncodedString) != ExpectedLength:
+            raise ValueError(f"Encoded string length {len(EncodedString)} does not match expected {ExpectedLength} for format '{FormatString}'")
 
-        unpacked_data = struct.unpack(format_string, encoded_string)
+        UnpackedData = struct.unpack(FormatString, EncodedString)
 
-        coordinates = []
+        Coordinates = []
 
-        for i in range(0, (num_coordinates * 2), 2):
-            coordinates.append((unpacked_data[(i + 2)], unpacked_data[(i + 3)]))
+        for i in range(0, (CoordinateCount * 2), 2):
+            Coordinates.append((UnpackedData[(i + 2)], UnpackedData[(i + 3)]))
 
-        json_data = {
-            "Command ID": unpacked_data[0],
-            "Packet ID": unpacked_data[1],
-            "Coordinates": coordinates
+        JSONData = {
+            "Command ID": UnpackedData[0],
+            "Packet ID": UnpackedData[1],
+            "Coordinates": Coordinates
         }
 
-        return json.dumps(json_data)
+        return json.dumps(JSONData)
