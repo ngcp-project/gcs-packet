@@ -1,6 +1,7 @@
 from enum import Enum
 
 class Vehicle(Enum):
-    MRA = 0
-    MEA = 1
-    ERU = 2
+    UNKNOWN = 0
+    MRA = 1
+    MEA = 2
+    ERU = 3

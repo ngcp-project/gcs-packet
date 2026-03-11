@@ -48,8 +48,6 @@ class Telemetry:
         if len(BinaryData) != ExpectedSize:
             print(f"Invalid telemetry packet size. Expected {ExpectedSize}, got {len(BinaryData)}")
             return None
-        
-
 
         UnpackedData = struct.unpack(Telemetry.FORMAT_STRING, BinaryData)
 
