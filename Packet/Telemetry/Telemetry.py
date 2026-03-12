@@ -1,3 +1,6 @@
+from Enum import Vehicle
+
+import json
 import struct
 
 class Telemetry:
@@ -10,8 +13,8 @@ class Telemetry:
              MessageFlag = 0, MessageLat = 0.0, MessageLon = 0.0, PatientStatus = 0):
         self.CommandID = CommandID
         self.PacketID = PacketID
-        self.Vehicle = None
-        self.MACAddress = None
+        self.Vehicle = Vehicle.UNKNOWN
+        self.MACAddress = ""
         self.Speed = Speed
         self.Pitch = Pitch
         self.Yaw = Yaw
@@ -29,7 +32,7 @@ class Telemetry:
         self.MessageLon = MessageLon
         self.PatientStatus = PatientStatus
 
-    def Encode(self):
+    def Encode(self) -> bytes:
         """Encode the current Telemetry instance into binary format."""
 
         return struct.pack(self.FORMAT_STRING, self.CommandID, self.PacketID,
@@ -42,7 +45,7 @@ class Telemetry:
                         )
 
     @staticmethod
-    def Decode(BinaryData):
+    def Decode(BinaryData) -> Telemetry:
         """Decode binary telemetry data into a Telemetry object."""
 
         ExpectedSize = 72  # Total size of the telemetry packet (in bytes)
@@ -70,6 +73,27 @@ class Telemetry:
         UnpackedData = tuple(ListData)
 
         return Telemetry(*UnpackedData)
+    
+    def ToJSON(self) -> str:
+        JSONData = {
+            "Command ID": self.CommandID,
+            "Packet ID": self.PacketID,
+            "Vehicle": self.Vehicle.name,
+            "Speed": self.Speed,
+            "Pitch": self.Pitch,
+            "Yaw": self.Yaw,
+            "Roll": self.Roll,
+            "Altitude": self.Altitude,
+            "Battery Life": self.BatteryLife,
+            "Last Updated": self.LastUpdated,
+            "Current Position": (self.CurrentPositionX, self.CurrentPositionY),
+            "Vehicle Status": self.VehicleStatus,
+            "Message Flag": self.MessageFlag,
+            "Message Location": (self.MessageLat, self.MessageLon),
+            "Patient Status": self.PatientStatus
+        }
+
+        return json.dumps(JSONData)
 
     def __str__(self):
         return (f"Telemetry: Command ID: {self.CommandID}, Packet ID: {self.PacketID}, Speed: {self.Speed}, Pitch: {self.Pitch}, Yaw: {self.Yaw}, Roll: {self.Roll}, "
