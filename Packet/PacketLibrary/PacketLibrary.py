@@ -1,9 +1,14 @@
 from Enum import *
 
 class PacketLibrary:
+    GCS_MAC_ADDRESS = ""
     MRA_MAC_ADDRESS = ""
     MEA_MAC_ADDRESS = ""
     ERU_MAC_ADDRESS = ""
+
+    @staticmethod
+    def GetGCSMACAddress() -> str:
+        return PacketLibrary.GCS_MAC_ADDRESS
 
     @staticmethod
     def GetMACAddressFromVehicle(VehicleName: Vehicle) -> str | tuple:
@@ -31,6 +36,20 @@ class PacketLibrary:
             return Vehicle.ERU
         else:
             return Vehicle.UNKNOWN
+    
+    @staticmethod
+    def SetGCSMACAddress(MACAddress: str):
+        try:
+            int(MACAddress, 16)
+
+            if (len(MACAddress) != 16):
+                raise ValueError("Must be 64-bit hex address")
+            
+            PacketLibrary.GCS_MAC_ADDRESS = MACAddress
+        except ValueError as e:
+            print(f"Error: {e}")
+        except Exception as e:
+            print(f"Error: {e}")
     
     @staticmethod
     def SetVehicleMACAddress(VehicleName: Vehicle, MACAddress: str):
