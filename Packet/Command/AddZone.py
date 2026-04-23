@@ -5,7 +5,7 @@ import json
 import struct
 
 class AddZone(CommandInterface):
-    FORMAT_STRING = "=BIHD"
+    FORMAT_STRING = "=BIHB"
     COMMAND_ID = 3
     ZONE_ID = 0
 
@@ -16,7 +16,7 @@ class AddZone(CommandInterface):
         self.Zone = Zone
         self.ZoneID = AddZone.ZONE_ID
 
-        if ((self.Coordinates.count() < 3) or (self.Coordinates.count() > 6)):
+        if ((len(self.Coordinates) < 3) or (len(self.Coordinates) > 6)):
             raise Exception("Invalid Coordinate Count")
         
         AddZone.ZONE_ID += 1
@@ -31,7 +31,7 @@ class AddZone(CommandInterface):
             Encoded data bytes
         """
         # Start with Command ID and Packet IDs
-        Header = struct.pack(self.FORMAT_STRING, AddZone.COMMAND_ID, self.PacketID, self.Zone, self.ZoneID)
+        Header = struct.pack(self.FORMAT_STRING, AddZone.COMMAND_ID, self.PacketID, self.Zone.value, self.ZoneID)
 
         # Flatten the list of tuples into a single list of floats
         FlattenedCoordinates = [Item for Coordinate in self.Coordinates for Item in Coordinate]
@@ -87,6 +87,7 @@ class AddZone(CommandInterface):
                     "Command ID": UnpackedData[0],
                     "Packet ID": UnpackedData[1],
                     "Zone": UnpackedData[2],
+                    "Zone ID": UnpackedData[3],
                     "Coordinates": Coordinates
                 }
 
