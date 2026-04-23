@@ -4,14 +4,22 @@ from Enum import *
 import json
 import struct
 
-class KeepIn(CommandInterface):
-    FORMAT_STRING = "=BI"
+class AddZone(CommandInterface):
+    FORMAT_STRING = "=BIHD"
     COMMAND_ID = 3
+    ZONE_ID = 0
 
-    def __init__(self, Coordinates: list):
+    def __init__(self, Zone: ZoneType, Coordinates: list):
         super().__init__()
 
         self.Coordinates = Coordinates
+        self.Zone = Zone
+        self.ZoneID = AddZone.ZONE_ID
+
+        if ((self.Coordinates.count < 3) or (self.Coordinates.count > 6)):
+            raise Exception("Invalid Coordinate Count")
+        
+        AddZone.ZONE_ID += 1
 
     def EncodePacket(self) -> bytes:
         """Encode data packet
@@ -23,7 +31,7 @@ class KeepIn(CommandInterface):
             Encoded data bytes
         """
         # Start with Command ID and Packet IDs
-        Header = struct.pack(self.FORMAT_STRING, KeepIn.COMMAND_ID, self.PacketID)
+        Header = struct.pack(self.FORMAT_STRING, AddZone.COMMAND_ID, self.PacketID, self.Zone, self.ZoneID)
 
         # Flatten the list of tuples into a single list of floats
         FlattenedCoordinates = [Item for Coordinate in self.Coordinates for Item in Coordinate]
@@ -54,7 +62,7 @@ class KeepIn(CommandInterface):
         if CoordinateCount > 6:
             print("Too many coordinates")
 
-        FormatString = KeepIn.FORMAT_STRING + "dd" * int(CoordinateCount)
+        FormatString = AddZone.FORMAT_STRING + "dd" * int(CoordinateCount)
 
         ExpectedLength = struct.calcsize(FormatString)
 
@@ -72,7 +80,7 @@ class KeepIn(CommandInterface):
 
         match (DecodeResult):
             case DecodeFormat.Class:
-                Data = KeepIn(Coordinates)
+                Data = AddZone(UnpackedData[2], Coordinates)
 
             case DecodeFormat.JSON:
                 JSONData = {
