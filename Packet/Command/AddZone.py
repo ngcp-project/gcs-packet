@@ -86,6 +86,7 @@ class AddZone(CommandInterface):
                 JSONData = {
                     "Command ID": UnpackedData[0],
                     "Packet ID": UnpackedData[1],
+                    "Zone": UnpackedData[2],
                     "Coordinates": Coordinates
                 }
 
