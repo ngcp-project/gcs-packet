@@ -1,4 +1,5 @@
 from Command.CommandInterface import CommandInterface
+from Enum import *
 
 import json
 import struct
@@ -26,7 +27,7 @@ class EmergencyStop(CommandInterface):
         return EncodedString
 
     @staticmethod
-    def DecodePacket(EncodedString) -> int:
+    def DecodePacket(EncodedString: str, DecodeResult: DecodeFormat) -> CommandInterface | str:
         """Decodes data packet
         
         Args:
@@ -42,10 +43,24 @@ class EmergencyStop(CommandInterface):
 
         UnpackedData = struct.unpack(EmergencyStop.FORMAT_STRING, EncodedString)
 
-        JSONData = {
-            "Command ID": UnpackedData[0],
-            "Packet ID": UnpackedData[1],
-            "Stop Status": UnpackedData[2]
-        }
+        Data = None
 
-        return json.dumps(JSONData)
+        match (DecodeResult):
+            case DecodeFormat.Class:
+                Data = EmergencyStop(UnpackedData[2])
+
+            case DecodeFormat.JSON:
+                JSONData = {
+                    "Command ID": UnpackedData[0],
+                    "Packet ID": UnpackedData[1],
+                    "Stop Status": UnpackedData[2]
+                }
+
+                Data = json.dumps(JSONData)
+                
+            case _:
+                print("Decode Error")
+
+                return
+
+        return Data
