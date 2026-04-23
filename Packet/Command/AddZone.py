@@ -16,7 +16,7 @@ class AddZone(CommandInterface):
         self.Zone = Zone
         self.ZoneID = AddZone.ZONE_ID
 
-        if ((self.Coordinates.count < 3) or (self.Coordinates.count > 6)):
+        if ((self.Coordinates.count() < 3) or (self.Coordinates.count() > 6)):
             raise Exception("Invalid Coordinate Count")
         
         AddZone.ZONE_ID += 1
