@@ -5,6 +5,7 @@ from Enum import Vehicle
 class CommandInterface:
     # FORMAT_STRING = # More information here: https://docs.python.org/3/library/struct.html
     PACKET_ID = 0
+    COMMAND_ID = 0
 
     def __init__(self):
         self.PacketID = CommandInterface.GeneratePacketID()
