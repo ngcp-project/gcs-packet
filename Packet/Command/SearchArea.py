@@ -1,4 +1,5 @@
 from Command.CommandInterface import CommandInterface
+from Enum import *
 
 import json
 import struct
@@ -39,7 +40,7 @@ class SearchArea(CommandInterface):
         return EncodedString
 
     @staticmethod
-    def DecodePacket(EncodedString) -> int:
+    def DecodePacket(EncodedString: str, DecodeResult: DecodeFormat) -> CommandInterface | str:
         """Decodes data packet
         
         Args:
@@ -48,6 +49,7 @@ class SearchArea(CommandInterface):
         Returns:
             Data from encoded data packet
         """
+
         CoordinateCount = (len(EncodedString) - 2) // 16
 
         if CoordinateCount > 6:
@@ -66,11 +68,25 @@ class SearchArea(CommandInterface):
 
         for i in range(0, (CoordinateCount * 2), 2):
             Coordinates.append((UnpackedData[(i + 2)], UnpackedData[(i + 3)]))
+        
+        Data = None
 
-        JSONData = {
-            "Command ID": UnpackedData[0],
-            "Packet ID": UnpackedData[1],
-            "Coordinates": Coordinates
-        }
+        match (DecodeResult):
+            case DecodeFormat.Class:
+                Data = SearchArea(Coordinates)
 
-        return json.dumps(JSONData)
+            case DecodeFormat.JSON:
+                JSONData = {
+                    "Command ID": UnpackedData[0],
+                    "Packet ID": UnpackedData[1],
+                    "Coordinates": Coordinates
+                }
+
+                Data = json.dumps(JSONData)
+
+            case _:
+                print("Decode Error")
+
+                return
+
+        return Data

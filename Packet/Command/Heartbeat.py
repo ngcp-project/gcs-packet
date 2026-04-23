@@ -1,5 +1,5 @@
 from Command.CommandInterface import CommandInterface
-from Enum.ConnectionStatus import ConnectionStatus
+from Enum import *
 
 import json
 import struct
@@ -27,7 +27,7 @@ class Heartbeat(CommandInterface):
         return EncodedString
 
     @staticmethod
-    def DecodePacket(EncodedString) -> int:
+    def DecodePacket(EncodedString: str, DecodeResult: DecodeFormat) -> CommandInterface | str:
         """Decodes data packet
         
         Args:
@@ -40,14 +40,28 @@ class Heartbeat(CommandInterface):
 
         if len(EncodedString) != ExpectedSize:
 
-            print("Invalid String Size in hb")
+            print("Invalid Heartbeat String Size")
 
         UnpackedData = struct.unpack(Heartbeat.FORMAT_STRING, EncodedString)
 
-        JSONData = {
-            "Command ID": UnpackedData[0],
-            "Packet ID": UnpackedData[1],
-            "Connection Status": UnpackedData[2]
-        }
+        Data = None
 
-        return json.dumps(JSONData)
+        match (DecodeResult):
+            case DecodeFormat.Class:
+                Data = Heartbeat(UnpackedData[2])
+
+            case DecodeFormat.JSON:
+                JSONData = {
+                    "Command ID": UnpackedData[0],
+                    "Packet ID": UnpackedData[1],
+                    "Connection Status": UnpackedData[2]
+                }
+
+                Data = json.dumps(JSONData)
+
+            case _:
+                print("Decode Error")
+
+                return
+
+        return Data

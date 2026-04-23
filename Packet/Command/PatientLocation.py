@@ -1,4 +1,5 @@
 from Command.CommandInterface import CommandInterface
+from Enum import *
 
 import json
 import struct
@@ -30,7 +31,7 @@ class PatientLocation(CommandInterface):
         return EncodedString
     
     @staticmethod
-    def DecodePacket(EncodedString):
+    def DecodePacket(EncodedString: str, DecodeResult: DecodeFormat) -> CommandInterface | str:
         """Decodes data packet
         
         Args:
@@ -40,8 +41,6 @@ class PatientLocation(CommandInterface):
         Returns:
             (x, y) tuple or JSON string with x and y keys
         """
-        #if format is None:
-            #warnings.warn("Format not specified in decode_packet, defaulting to 'tuple'", UserWarning)
 
         ExpectedSize = struct.calcsize(PatientLocation.FORMAT_STRING)
 
@@ -50,18 +49,26 @@ class PatientLocation(CommandInterface):
         
         UnpackedData = struct.unpack(PatientLocation.FORMAT_STRING, EncodedString)
 
-        # we are ignoring the "=BB" part here which is the header, "unpacked_data" would look like [1, 5, <some double value>, <some double value>]
         Coordinates = (UnpackedData[2], UnpackedData[3])
-        
-        #if format == "json":
-            #return json.dumps({"x": x, "y": y}, indent=2)
 
-        JSONData = {
-            "Command ID": UnpackedData[0],
-            "Packet ID": UnpackedData[1],
-            "Coordinates": Coordinates
-        }
-        
-        return json.dumps(JSONData)
-        
-    
+        Data = None
+
+        match (DecodeResult):
+            case DecodeFormat.Class:
+                Data = PatientLocation(Coordinates)
+
+            case DecodeFormat.JSON:
+                JSONData = {
+                    "Command ID": UnpackedData[0],
+                    "Packet ID": UnpackedData[1],
+                    "Coordinates": Coordinates
+                }
+
+                Data = json.dumps(JSONData)
+
+            case _:
+                print("Decode Error")
+
+                return
+
+        return Data
