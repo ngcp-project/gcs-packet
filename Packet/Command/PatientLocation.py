@@ -3,11 +3,10 @@ from Enum import *
 
 import json
 import struct
-import warnings
 
 class PatientLocation(CommandInterface):
     FORMAT_STRING = "=BIdd"
-    COMMAND_ID = 5
+    COMMAND_ID = 4
 
     def __init__(self, Coordinates: tuple[float, float]):
         super().__init__()
