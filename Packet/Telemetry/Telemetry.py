@@ -45,7 +45,7 @@ class Telemetry:
                         )
 
     @staticmethod
-    def Decode(BinaryData) -> Telemetry:
+    def Decode(BinaryData) -> "Telemetry":
         """Decode binary telemetry data into a Telemetry object."""
 
         ExpectedSize = 72  # Total size of the telemetry packet (in bytes)
