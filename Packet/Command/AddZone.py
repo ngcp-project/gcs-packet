@@ -99,3 +99,6 @@ class AddZone(CommandInterface):
                 return
 
         return Data
+    
+    def __str__(self):
+        return f"Add Zone:\nCommand ID: {self.COMMAND_ID}\nPacket ID: {self.PacketID}\nZone Type: {self.Zone.value} => {self.Zone.name}\nZone ID: {self.ZoneID}\nCoordinates: {self.Coordinates}"
