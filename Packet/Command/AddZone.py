@@ -80,7 +80,7 @@ class AddZone(CommandInterface):
 
         match (DecodeResult):
             case DecodeFormat.Class:
-                Data = AddZone(UnpackedData[2], Coordinates)
+                Data = AddZone(ZoneType(UnpackedData[2]), Coordinates)
 
             case DecodeFormat.JSON:
                 JSONData = {

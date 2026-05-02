@@ -48,7 +48,7 @@ class Heartbeat(CommandInterface):
 
         match (DecodeResult):
             case DecodeFormat.Class:
-                Data = Heartbeat(UnpackedData[2])
+                Data = Heartbeat(ConnectionStatus(UnpackedData[2]))
 
             case DecodeFormat.JSON:
                 JSONData = {
