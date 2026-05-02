@@ -64,3 +64,6 @@ class EmergencyStop(CommandInterface):
                 return
 
         return Data
+    
+    def __str__(self):
+        return f"Emergency Stop:\nCommand ID: {self.COMMAND_ID}\nPacket ID: {self.PacketID}\nStop Status: {self.StopStatus}"

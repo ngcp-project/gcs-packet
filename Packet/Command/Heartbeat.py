@@ -65,3 +65,6 @@ class Heartbeat(CommandInterface):
                 return
 
         return Data
+    
+    def __str__(self):
+        return f"Heartbeat:\nCommand ID: {self.COMMAND_ID}\nPacket ID: {self.PacketID}\nConnection Status: {self.CurrentConnectionStatus.value} => {self.CurrentConnectionStatus.name}"

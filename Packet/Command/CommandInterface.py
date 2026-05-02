@@ -41,3 +41,6 @@ class CommandInterface:
         CommandInterface.PACKET_ID += 1
 
         return CurrentPacketID
+    
+    def __str__(self):
+        return f"Command Interface"

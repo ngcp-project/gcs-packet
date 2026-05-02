@@ -8,10 +8,10 @@ class PatientLocation(CommandInterface):
     FORMAT_STRING = "=BIdd"
     COMMAND_ID = 4
 
-    def __init__(self, Coordinates: tuple[float, float]):
+    def __init__(self, Coordinate: tuple[float, float]):
         super().__init__()
 
-        self.Coordinates = Coordinates
+        self.Coordinate = Coordinate
 
     def EncodePacket(self) -> bytes:
         """Encode data packet
@@ -25,7 +25,7 @@ class PatientLocation(CommandInterface):
 
         # how struct.pack and its format characters (e.g. "BB" or "dd") are explained here https://docs.python.org/3/library/struct.html 
         # encodes the header
-        EncodedString = struct.pack(self.FORMAT_STRING, PatientLocation.COMMAND_ID, self.PacketID, self.Coordinates[0], self.Coordinates[1])
+        EncodedString = struct.pack(self.FORMAT_STRING, PatientLocation.COMMAND_ID, self.PacketID, self.Coordinate[0], self.Coordinate[1])
     
         return EncodedString
     
@@ -48,19 +48,19 @@ class PatientLocation(CommandInterface):
         
         UnpackedData = struct.unpack(PatientLocation.FORMAT_STRING, EncodedString)
 
-        Coordinates = (UnpackedData[2], UnpackedData[3])
+        Coordinate = (UnpackedData[2], UnpackedData[3])
 
         Data = None
 
         match (DecodeResult):
             case DecodeFormat.Class:
-                Data = PatientLocation(Coordinates)
+                Data = PatientLocation(Coordinate)
 
             case DecodeFormat.JSON:
                 JSONData = {
                     "Command ID": UnpackedData[0],
                     "Packet ID": UnpackedData[1],
-                    "Coordinates": Coordinates
+                    "Coordinate": Coordinate
                 }
 
                 Data = json.dumps(JSONData)
@@ -71,3 +71,6 @@ class PatientLocation(CommandInterface):
                 return
 
         return Data
+    
+    def __str__(self):
+        return f"Patient Location:\nCommand ID: {self.COMMAND_ID}\nPacket ID: {self.PacketID}\nCoordinate: {self.Coordinate}"
