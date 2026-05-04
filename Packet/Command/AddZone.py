@@ -57,7 +57,7 @@ class AddZone(CommandInterface):
         Returns:
             Data from encoded data packet
         """
-        CoordinateCount = (len(EncodedString) - 2) // 16
+        CoordinateCount = (len(EncodedString) - 2) // 8
 
         if CoordinateCount > 6:
             print("Too many coordinates")
