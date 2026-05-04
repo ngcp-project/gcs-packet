@@ -37,7 +37,7 @@ class AddZone(CommandInterface):
         FlattenedCoordinates = [Item for Coordinate in self.Coordinates for Item in Coordinate]
 
         # Build the format string: two bytes for header, then 2 doubles per coordinate
-        FormatString = f"{len(FlattenedCoordinates)}d"
+        FormatString = f"{len(FlattenedCoordinates)}f"
 
         if FlattenedCoordinates:
             CoordinateBytes = struct.pack(FormatString, *FlattenedCoordinates)
@@ -62,7 +62,7 @@ class AddZone(CommandInterface):
         if CoordinateCount > 6:
             print("Too many coordinates")
 
-        FormatString = AddZone.FORMAT_STRING + "dd" * int(CoordinateCount)
+        FormatString = AddZone.FORMAT_STRING + "ff" * int(CoordinateCount)
 
         ExpectedLength = struct.calcsize(FormatString)
 
